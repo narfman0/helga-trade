@@ -22,7 +22,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    install_requires=['helga', 'requests'],
+    install_requires=['helga', 'requests', 'googlefinance'],
     test_suite='tests/test_trade',
     entry_points=dict(
         helga_plugins=[

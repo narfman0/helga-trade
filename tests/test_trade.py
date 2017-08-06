@@ -64,7 +64,7 @@ class Testtrade(unittest.TestCase):
     @mock.patch('helga_trade.helga_trade.requests.get', side_effect=mocked_requests_get)
     def test_try_crypto(self, mock_get):
         price = try_crypto('btc')
-        self.assertEqual(3274, price)
+        self.assertEqual(3274.73, price)
         try:
             try_crypto('ltc')
             self.assertEqual('Exception!', 'Should be thrown')

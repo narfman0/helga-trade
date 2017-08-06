@@ -1,4 +1,5 @@
 import requests
+from googlefinance import getQuotes
 from helga import settings
 from helga.plugins import command, random_ack
 
@@ -6,6 +7,7 @@ from helga.plugins import command, random_ack
 CRYPTO_URL = 'https://min-api.cryptocompare.com/data/price?fsym={from}&tsyms={to}'
 CRYPTO_LIST = 'https://www.cryptocompare.com/api/data/coinlist/'
 TARGET_CURRENCY = getattr(settings, 'TRADE_TARGET_CURRENCY', 'USD')
+RESPONSE_TEMPLATE = '{currency_type} {symbol} is currently trading at {price} {target_currency}'
 crypto_data = None
 
 
@@ -15,9 +17,13 @@ def logic(args):
         symbol = args[0].lower()
         try:
             price = try_crypto(symbol)
-            return symbol + ' is currently trading at ' + str(price) + ' ' + TARGET_CURRENCY
+            return RESPONSE_TEMPLATE.format(currency_type='Crypto', symbol=symbol, price=price, target_currency=TARGET_CURRENCY)
         except ValueError:
-            return 'Symbol ' + symbol + ' not supported!'
+            try:
+                price = float(getQuotes(symbol)[0]['LastTradePrice'])
+                return RESPONSE_TEMPLATE.format(currency_type='Stock', symbol=symbol, price=price, target_currency=TARGET_CURRENCY)
+            except:
+                return 'Symbol ' + symbol + ' not supported!'
     return 'Try asking for help? Unknown command: ' + ', '.join(args)
 
 
@@ -30,7 +36,7 @@ def try_crypto(symbol='btc'):
     if symbol in crypto_data:
         response = requests.get(CRYPTO_URL).json()
         price = response[TARGET_CURRENCY]
-        return int(price)
+        return float(price)
     raise ValueError(symbol + ' not available as crypto')
 
 
