@@ -4,7 +4,7 @@ from helga import settings
 from helga.plugins import command, random_ack
 
 
-CRYPTO_URL = 'https://min-api.cryptocompare.com/data/price?fsym={from}&tsyms={to}'
+CRYPTO_URL = 'https://min-api.cryptocompare.com/data/price?fsym={from_symbol}&tsyms={to_symbol}'
 CRYPTO_LIST = 'https://www.cryptocompare.com/api/data/coinlist/'
 TARGET_CURRENCY = getattr(settings, 'TRADE_TARGET_CURRENCY', 'USD')
 RESPONSE_TEMPLATE = '{currency_type} {symbol} is currently trading at {price} {target_currency}'
@@ -34,7 +34,7 @@ def try_crypto(symbol='btc'):
             if data['CoinName'] == symbol:
                 symbol = crypto_symbol
     if symbol in crypto_data:
-        response = requests.get(CRYPTO_URL).json()
+        response = requests.get(CRYPTO_URL.format(from_symbol=symbol.upper(), to_symbol=TARGET_CURRENCY)).json()
         price = response[TARGET_CURRENCY]
         return float(price)
     raise ValueError(symbol + ' not available as crypto')
