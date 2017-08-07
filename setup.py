@@ -26,7 +26,7 @@ setup(
     test_suite='tests/test_trade',
     entry_points=dict(
         helga_plugins=[
-            'trade = helga_trade.helga_trade:helga_trade',
+            'trade = helga_trade.helga_trade:trade',
         ],
     ),
 )
